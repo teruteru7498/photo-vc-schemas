@@ -102,9 +102,9 @@
           "pattern": "^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
         "revocation_nonce": {
-          "description": "失効番号(revNonce、64ビット符号なし整数)を10進の文字列で書いたもの。JSONの数値では2^53を超える値が正確に表せないため文字列にする",
+          "description": "失効番号(revNonce)を10進の文字列で書いたもの。Issuer Node が内部で浮動小数点数を経由するため、値は 2^53 未満の乱数にする",
           "type": "string",
-          "pattern": "^(0|[1-9][0-9]{0,19})$"
+          "pattern": "^(0|[1-9][0-9]{0,15})$"
         },
         "content_hash": {
           "type": "object",
