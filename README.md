@@ -1,6 +1,5 @@
 # photo-vc-schemas
-
-信州大学 Kiso-Labo の研究「報道写真の来歴をVerifiable Credentials(VC)でたどる」で使うVCのスキーマ置き場です。VCは Privado ID(iden3)の仕組みで発行・検証します。
+「報道写真の来歴をVerifiable Credentials(VC)でたどる」で使うVCのスキーマ置き場。VCは Privado ID(iden3)の仕組みで発行・検証。
 
 ## 構成
 
