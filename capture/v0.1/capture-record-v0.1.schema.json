@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/teruteru7498/photo-vc-schemas/main/capture/v0.1/capture-record-v0.1.schema.json",
+  "title": "CaptureRecord v0.1",
+  "description": "撮影VCの credentialSubject.capture_record(まとめ項目)と loc_L1〜loc_L5(位置)のJSON文字列の中身。どちらもJCS(RFC 8785)で正規化して文字列にする。",
+  "$ref": "#/$defs/CaptureRecord",
+  "$defs": {
+    "CaptureRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basic_metadata", "integrity", "photographer_intent"],
+      "properties": {
+        "basic_metadata": { "$ref": "#/$defs/BasicMetadata" },
+        "integrity": { "$ref": "#/$defs/Integrity" },
+        "photographer_intent": { "$ref": "#/$defs/PhotographerIntent" }
+      }
+    },
+
+    "BasicMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capture_datetime", "capture_datetime_source", "geolocation", "device", "camera_settings", "image_technical"],
+      "properties": {
+        "capture_datetime": {
+          "description": "撮影日時(ISO 8601、時差付き。例: 2026-09-14T18:41:58+09:00)",
+          "type": "string",
+          "format": "date-time"
+        },
+        "capture_datetime_source": {
+          "description": "端末の時計を衛星測位またはネットワークの時刻と比べ、2秒以内で合っていればその名前。比べられなければ device_clock",
+          "enum": ["gnss_synced", "network_synced", "device_clock"]
+        },
+        "geolocation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source"],
+          "properties": {
+            "source": {
+              "description": "位置の取得方法。mock はOSが偽の位置と判定したとき。none は測位できなかったとき(位置の項目は作らない)",
+              "enum": ["gps", "network", "mock", "none"]
+            }
+          }
+        },
+        "device": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["make", "model", "os_version", "app_name", "app_version"],
+          "properties": {
+            "make": { "type": "string" },
+            "model": { "type": "string" },
+            "os_version": { "type": "string" },
+            "app_name": { "type": "string" },
+            "app_version": { "type": "string" }
+          }
+        },
+        "camera_settings": {
+          "description": "取得できない値は null",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["iso", "shutter_speed", "aperture", "focal_length_mm", "flash_used"],
+          "properties": {
+            "iso": { "type": ["integer", "null"], "minimum": 1 },
+            "shutter_speed": {
+              "description": "例: 1/500、2(秒)",
+              "type": ["string", "null"],
+              "pattern": "^(1/[0-9]+|[0-9]+(\\.[0-9]+)?)$"
+            },
+            "aperture": {
+              "description": "例: f/1.8",
+              "type": ["string", "null"],
+              "pattern": "^f/[0-9]+(\\.[0-9]+)?$"
+            },
+            "focal_length_mm": { "type": ["number", "null"], "exclusiveMinimum": 0 },
+            "flash_used": { "type": ["boolean", "null"] }
+          }
+        },
+        "image_technical": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width_px", "height_px", "format", "file_size_bytes"],
+          "properties": {
+            "width_px": { "type": "integer", "minimum": 1 },
+            "height_px": { "type": "integer", "minimum": 1 },
+            "format": { "const": "JPEG" },
+            "file_size_bytes": { "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+
+    "Integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "credential_id", "revocation_nonce", "content_hash", "hardware_attestation",
+        "capture_environment_trust_level", "previous_credential", "chain_position"
+      ],
+      "properties": {
+        "credential_id": {
+          "description": "この撮影VC自身の id。発行前に作り、Issuer Node にも claimID として同じ値を指定する",
+          "type": "string",
+          "pattern": "^urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "revocation_nonce": {
+          "description": "失効番号(revNonce、64ビット符号なし整数)を10進の文字列で書いたもの。JSONの数値では2^53を超える値が正確に表せないため文字列にする",
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]{0,19})$"
+        },
+        "content_hash": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "value"],
+          "properties": {
+            "algorithm": { "const": "SHA-256" },
+            "value": {
+              "description": "書き出したJPEGファイルのバイト列のSHA-256(16進小文字64文字)",
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "hardware_attestation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["attested", "attestation_type"],
+          "properties": {
+            "attested": { "type": "boolean" },
+            "attestation_type": { "enum": ["none", "android_key_attestation"] }
+          }
+        },
+        "capture_environment_trust_level": {
+          "description": "エミュレータまたは mock の位置なら self_reported、実機でこのアプリが撮影したなら trusted_app。trusted_hardware は将来用",
+          "enum": ["trusted_hardware", "trusted_app", "self_reported"]
+        },
+        "previous_credential": {
+          "description": "撮影VCはチェーンの起点なので null",
+          "type": "null"
+        },
+        "chain_position": { "const": "capture" }
+      }
+    },
+
+    "PhotographerIntent": {
+      "description": "撮影者の自己申告。内容の真偽は技術的に保証されない(self_attested)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "self_attested", "photographer_id", "photographer_intent", "priority_elements", "context_notes",
+        "keywords", "photo_note", "intended_use_context", "consent_status", "preferred_max_disclosure_level"
+      ],
+      "properties": {
+        "self_attested": { "const": true },
+        "photographer_id": {
+          "description": "撮影者のDID。credentialSubject.id および開示証明を作った撮影者のDIDと一致しなければならない",
+          "type": "string",
+          "pattern": "^did:"
+        },
+        "photographer_intent": {
+          "description": "取材全体の撮影意図(撮影前に入力)",
+          "type": "string"
+        },
+        "priority_elements": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "context_notes": { "type": "string" },
+        "keywords": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "photo_note": {
+          "description": "撮影直後の1枚ごとの補足。書かなければ空文字列",
+          "type": "string"
+        },
+        "intended_use_context": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["journalism", "legal_evidence", "sns"] }
+        },
+        "consent_status": {
+          "enum": ["subject_consent_obtained", "consent_not_required", "consent_not_obtained", "no_identifiable_subjects"]
+        },
+        "preferred_max_disclosure_level": {
+          "enum": ["none", "country", "admin1", "admin2", "approx_1km", "precise"]
+        }
+      }
+    },
+
+    "Country": {
+      "description": "ISO 3166-1 alpha-2",
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "Approx1km": {
+      "description": "WGS84の緯度・経度を小数第2位に丸めた値",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latitude", "longitude"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      }
+    },
+    "Precise": {
+      "description": "WGS84の緯度・経度(小数第6位まで)、標高(取れなければ省く)、水平誤差",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latitude", "longitude", "horizontal_accuracy_m"],
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+        "altitude_m": { "type": "number" },
+        "horizontal_accuracy_m": { "type": "number", "minimum": 0, "maximum": 1000 }
+      }
+    },
+
+    "loc_L1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country"],
+      "properties": {
+        "country": { "$ref": "#/$defs/Country" }
+      }
+    },
+    "loc_L2": {
+      "description": "日本のみ作る",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country", "admin1"],
+      "properties": {
+        "country": { "$ref": "#/$defs/Country" },
+        "admin1": { "type": "string", "minLength": 1 }
+      }
+    },
+    "loc_L3": {
+      "description": "日本のみ作る",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country", "admin1", "admin2"],
+      "properties": {
+        "country": { "$ref": "#/$defs/Country" },
+        "admin1": { "type": "string", "minLength": 1 },
+        "admin2": { "type": "string", "minLength": 1 }
+      }
+    },
+    "loc_L4": {
+      "description": "誤差1000m以下のときだけ作る。海外では admin1・admin2 を含めない",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country", "approx_1km"],
+      "dependentRequired": { "admin2": ["admin1"] },
+      "properties": {
+        "country": { "$ref": "#/$defs/Country" },
+        "admin1": { "type": "string", "minLength": 1 },
+        "admin2": { "type": "string", "minLength": 1 },
+        "approx_1km": { "$ref": "#/$defs/Approx1km" }
+      }
+    },
+    "loc_L5": {
+      "description": "誤差1000m以下のときだけ作る。海外では admin1・admin2 を含めない",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["country", "approx_1km", "precise"],
+      "dependentRequired": { "admin2": ["admin1"] },
+      "properties": {
+        "country": { "$ref": "#/$defs/Country" },
+        "admin1": { "type": "string", "minLength": 1 },
+        "admin2": { "type": "string", "minLength": 1 },
+        "approx_1km": { "$ref": "#/$defs/Approx1km" },
+        "precise": { "$ref": "#/$defs/Precise" }
+      }
+    }
+  }
+}

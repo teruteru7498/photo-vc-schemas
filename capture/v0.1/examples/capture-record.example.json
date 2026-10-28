@@ -1,0 +1,56 @@
+{
+  "basic_metadata": {
+    "capture_datetime": "2026-09-14T18:41:58+09:00",
+    "capture_datetime_source": "gnss_synced",
+    "geolocation": {
+      "source": "gps"
+    },
+    "device": {
+      "make": "Google",
+      "model": "Pixel 8",
+      "os_version": "Android 15",
+      "app_name": "KisoLaboCaptureApp",
+      "app_version": "0.1.0"
+    },
+    "camera_settings": {
+      "iso": 100,
+      "shutter_speed": "1/500",
+      "aperture": "f/1.7",
+      "focal_length_mm": 6.9,
+      "flash_used": false
+    },
+    "image_technical": {
+      "width_px": 4080,
+      "height_px": 3072,
+      "format": "JPEG",
+      "file_size_bytes": 3612480
+    }
+  },
+  "integrity": {
+    "credential_id": "urn:uuid:8f9c2e3a-0000-4000-8000-000000000000",
+    "revocation_nonce": "18446744073709551615",
+    "content_hash": {
+      "algorithm": "SHA-256",
+      "value": "0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    "hardware_attestation": {
+      "attested": false,
+      "attestation_type": "none"
+    },
+    "capture_environment_trust_level": "trusted_app",
+    "previous_credential": null,
+    "chain_position": "capture"
+  },
+  "photographer_intent": {
+    "self_attested": true,
+    "photographer_id": "did:polygonid:polygon:amoy:2qDUMMYPhotographerDidXXXXXXXXXXXXXXXXXXXX",
+    "photographer_intent": "台風被害後の避難所の様子を、支援物資を受け取る住民の表情を中心に伝えたい",
+    "priority_elements": ["避難所の炊き出し列", "支援物資を受け取る高齢女性"],
+    "context_notes": "撮影地は長野県内の指定避難所。取材許可済み。",
+    "keywords": ["台風", "避難所", "被災者支援"],
+    "photo_note": "",
+    "intended_use_context": ["journalism"],
+    "consent_status": "subject_consent_obtained",
+    "preferred_max_disclosure_level": "admin2"
+  }
+}

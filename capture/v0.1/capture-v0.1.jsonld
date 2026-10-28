@@ -1,0 +1,45 @@
+{
+  "@context": [
+    {
+      "@version": 1.1,
+      "@protected": true,
+      "id": "@id",
+      "type": "@type",
+      "CaptureCredential": {
+        "@id": "https://raw.githubusercontent.com/teruteru7498/photo-vc-schemas/main/capture/v0.1/capture-v0.1.jsonld#CaptureCredential",
+        "@context": {
+          "@version": 1.1,
+          "@protected": true,
+          "id": "@id",
+          "type": "@type",
+          "pvc-capture": "https://github.com/teruteru7498/photo-vc-schemas/blob/main/capture/README.md#",
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "capture_record": {
+            "@id": "pvc-capture:capture_record",
+            "@type": "xsd:string"
+          },
+          "loc_L1": {
+            "@id": "pvc-capture:loc_L1",
+            "@type": "xsd:string"
+          },
+          "loc_L2": {
+            "@id": "pvc-capture:loc_L2",
+            "@type": "xsd:string"
+          },
+          "loc_L3": {
+            "@id": "pvc-capture:loc_L3",
+            "@type": "xsd:string"
+          },
+          "loc_L4": {
+            "@id": "pvc-capture:loc_L4",
+            "@type": "xsd:string"
+          },
+          "loc_L5": {
+            "@id": "pvc-capture:loc_L5",
+            "@type": "xsd:string"
+          }
+        }
+      }
+    }
+  ]
+}
