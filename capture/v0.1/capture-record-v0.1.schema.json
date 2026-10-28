@@ -203,7 +203,7 @@
       }
     },
     "Precise": {
-      "description": "WGS84の緯度・経度(小数第6位まで)、標高(取れなければ省く)、水平誤差",
+      "description": "WGS84の緯度・経度(小数第6位まで)、高さ altitude_m(端末のOSが返すWGS84楕円体高。海抜ではない。取れなければ省く)、水平誤差",
       "type": "object",
       "additionalProperties": false,
       "required": ["latitude", "longitude", "horizontal_accuracy_m"],

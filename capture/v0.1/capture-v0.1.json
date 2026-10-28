@@ -93,6 +93,11 @@
           "type": "string",
           "format": "uri"
         },
+        "type": {
+          "title": "VCの種類",
+          "description": "Issuer Node が発行時に自動で CaptureCredential を入れる",
+          "type": "string"
+        },
         "capture_record": {
           "title": "まとめ項目",
           "description": "basic_metadata / integrity / photographer_intent をJCS(RFC 8785)で正規化したJSON文字列。中身の形は capture-record-v0.1.schema.json の CaptureRecord。",
